@@ -47,6 +47,7 @@ if (accessToken) {
   
 // This function will be called after the user is redirected back from Spotify authorization
 function fetchData(accessToken) {
+    console.log("access token: " + accessToken);
     // Use the access token to fetch data from Spotify API
     var headers = {
         'Authorization': 'Bearer ' + accessToken,
