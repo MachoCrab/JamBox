@@ -45,6 +45,7 @@ if (accessToken) {
 
 function getTerm() {
     const term = document.getElementById("term").value;
+    console.log("Term" + term);
     return term;
 }
 
@@ -55,8 +56,10 @@ function getTopTracks(term) {
         'Content-Type': 'application/json'
     };
 
+    url = 'https://api.spotify.com/v1/me/top/tracks?time_range=' + term + '&limit=50';
+    console.log(url);
     Promise.all([
-        fetch('https://api.spotify.com/v1/me/top/tracks?time_range=' + term + '&limit=50', { headers }),
+        fetch(url, { headers }),
     ])
     .then(responses => Promise.all(responses.map(response => response.json())))
     .then(data => {
