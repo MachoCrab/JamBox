@@ -48,8 +48,10 @@ body {
     min-width: 350px;
   }
   
-  .loading-screen {
+  #loading-screen {
     display: none;
+    align-items: center;
+    justify-content: center;
     position: fixed;
     top: 0;
     left: 0;
@@ -60,9 +62,4 @@ body {
     text-align: center;
     font-size: 24px;
     z-index: 9999;
-  }
-  .loading-screen.active {
-    display: flex;
-    align-items: center;
-    justify-content: center;
   }

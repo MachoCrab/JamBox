@@ -2,8 +2,7 @@ var getDataButton = document.getElementById('get-data-button');
 
 if (getDataButton) {
   getDataButton.addEventListener('click', function () {
-    var loadingScreen = document.querySelector('.loading-screen');
-    loadingScreen.classList.add('active');
+    document.getElementById('loading-screen').style.display = "flex";
     authorizeSpotify();
   });
 }
@@ -91,6 +90,8 @@ function fetchData(accessToken) {
         
     })
     .catch(error => console.error('Failed to fetch data:', error));
+
+    document.getElementById("loading-screen").display = "none";
 }
 
 
@@ -384,3 +385,5 @@ function addAllTracksToPlaylist(trackURIs, playlistId, headers) {
             .catch(error => console.error('Failed to add tracks to the playlist:', error));
     }
 }
+
+
