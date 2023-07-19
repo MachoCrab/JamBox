@@ -35,6 +35,7 @@ function getAccessTokenFromURL() {
 // After the user is redirected back from Spotify authorization, call fetchData
 document.addEventListener('DOMContentLoaded', function () {
 const accessToken = getAccessTokenFromURL();
+
 if (accessToken) {
     //var loadingScreen = document.querySelector('.loading-screen');
     //loadingScreen.classList.add('active');
@@ -44,6 +45,34 @@ if (accessToken) {
 
 function getTerm() {
     const term = document.getElementById("term");
+    return term;
+}
+
+function getTopTracks(term) {
+    var headers = {
+        'Authorization': 'Bearer ' + accessToken,
+        'Content-Type': 'application/json'
+    };
+
+    Promise.all([
+        fetch('https://api.spotify.com/v1/me/top/tracks?time_range=medium_term&limit=50', { headers }),
+    ])
+    .then(responses => Promise.all(responses.map(response => response.json())))
+    .then(data => {
+        var topTracks = data[0].items.map(track => ({
+            name: track.name,
+            artist: track.artists[0].name,
+            album: track.album.name,
+            image_url: track.album.images[0].url,
+            track_id: track.id,
+            access_token: accessToken
+        }));
+
+        renderTopTrack(topTracks);
+    })
+    .catch(error => console.error('Failed to fetch data:', error));
+
+    
 }
   
 // This function will be called after the user is redirected back from Spotify authorization
@@ -97,34 +126,25 @@ function fetchData(accessToken) {
 }
 
 
-function renderData(playlists, recentTracks, topTracks) {
-    console.log("attempting to render data");
-    console.log(topTracks)
-    console.log(playlists)
-    
-    // Render top tracks
-    var topTracksElement = document.createElement('h1');
-    topTracksElement.textContent = 'My top tracks in the last 6 months';
-    document.body.appendChild(topTracksElement);
 
-    var selectElement = document.createElement('select');
-    var options = ['4 weeks', '6 months', 'Lifetime'];
-    options.forEach(function (optionText) {
-    var option = document.createElement('option');
-    option.textContent = optionText;
-    selectElement.appendChild(option);
-    });
-    document.body.appendChild(selectElement);
-
-    function onDropdownChange() {
-    var selectedTerm = selectElement.value;
-    topTracksElement.textContent = 'My top tracks in the last ' + selectedTerm;
-    }
-
-    selectElement.addEventListener('change', onDropdownChange);
+selectElement = document.getElementById('term');
+selectElement.addEventListener('change', onDropdownChange);
 
 
-    var topTracksList = document.createElement('ol');
+function renderTopTracks(topTracks) {
+    console.log("rendering topTracks");
+    // Check if the ol element with id 'topTracksList' already exists
+    var topTracksList = document.getElementById('topTracksList');
+    if (!topTracksList) {
+        // If it doesn't exist, create a new ol element
+        topTracksList = document.createElement('ol');
+        topTracksList.id = 'topTracksList'; // Set the id attribute
+        document.body.appendChild(topTracksList);
+    } else {
+        // If it exists, clear its content to update with new data
+        topTracksList.innerHTML = '';
+    }  
+
     topTracks.forEach(function(track) {
         var trackItem = document.createElement('li');
         var trackImage = document.createElement('img');
@@ -142,7 +162,19 @@ function renderData(playlists, recentTracks, topTracks) {
         topTracksList.appendChild(trackItem);
     });
     document.body.appendChild(topTracksList);
-    console.log("Top tracks printed")
+    console.log("Top tracks printed")    
+}
+
+// inital load of the website
+function renderData(playlists, recentTracks, topTracks) {
+    console.log("attempting to render data");
+    console.log(topTracks)
+    console.log(playlists)
+    
+    // Render top tracks
+    renderTopTracks(topTracks);
+    const selectElement = document.getElementById("term")
+    selectElement.addEventListener('change', renderTopTracks(getTopTracks(getTerm())));
      
     // Render playlists
      var playlistsElement = document.createElement('h1');
