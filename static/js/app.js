@@ -150,6 +150,12 @@ function fetchDataOLD(accessToken) {
     document.getElementById("loading-screen").display = "none";
 }
 
+function updateTopTracks(term) {
+    getTopTracks(term).then(data => {
+        renderTopTracks(data);
+    });
+}
+
 function fetchData(accessToken) {
     console.log("access token: " + accessToken);
     var headers = {
