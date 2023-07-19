@@ -42,7 +42,9 @@ if (accessToken) {
 }
 });
 
-
+function getTerm() {
+    const term = document.getElementById("term");
+}
   
 // This function will be called after the user is redirected back from Spotify authorization
 function fetchData(accessToken) {
@@ -99,10 +101,28 @@ function renderData(playlists, recentTracks, topTracks) {
     console.log("attempting to render data");
     console.log(topTracks)
     console.log(playlists)
+    
     // Render top tracks
     var topTracksElement = document.createElement('h1');
     topTracksElement.textContent = 'My top tracks in the last 6 months';
     document.body.appendChild(topTracksElement);
+
+    var selectElement = document.createElement('select');
+    var options = ['4 weeks', '6 months', 'Lifetime'];
+    options.forEach(function (optionText) {
+    var option = document.createElement('option');
+    option.textContent = optionText;
+    selectElement.appendChild(option);
+    });
+    document.body.appendChild(selectElement);
+
+    function onDropdownChange() {
+    var selectedTerm = selectElement.value;
+    topTracksElement.textContent = 'My top tracks in the last ' + selectedTerm;
+    }
+
+    selectElement.addEventListener('change', onDropdownChange);
+
 
     var topTracksList = document.createElement('ol');
     topTracks.forEach(function(track) {
