@@ -11,10 +11,10 @@
     <h1>My Playlists</h1>
     <a id="myLink" onclick="updatePlaylist()"><button>Update EVERYTHING</button></a>
     <h1> My top tracks in the last 
-        <select name="term" id="term"> 
-            <option value="6months">6 months</option>
-            <option value="4weeks">4 weeks</option>
-            <option value="lifetime">Lifetime</option>
+        <select name="term" id="term" onchange="renderTopTracks(getTopTracks(getTerm()))"> 
+            <option value="medium_term">6 months</option>
+            <option value="short_term">4 weeks</option>
+            <option value="long_term">Lifetime</option>
         </select>
     </h1>
     

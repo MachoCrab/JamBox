@@ -44,18 +44,19 @@ if (accessToken) {
 });
 
 function getTerm() {
-    const term = document.getElementById("term");
+    const term = document.getElementById("term").value;
     return term;
 }
 
 function getTopTracks(term) {
+    accessToken = getAccessTokenFromURL();
     var headers = {
         'Authorization': 'Bearer ' + accessToken,
         'Content-Type': 'application/json'
     };
 
     Promise.all([
-        fetch('https://api.spotify.com/v1/me/top/tracks?time_range=medium_term&limit=50', { headers }),
+        fetch('https://api.spotify.com/v1/me/top/tracks?time_range=' + term + '&limit=50', { headers }),
     ])
     .then(responses => Promise.all(responses.map(response => response.json())))
     .then(data => {
@@ -68,7 +69,7 @@ function getTopTracks(term) {
             access_token: accessToken
         }));
 
-        renderTopTrack(topTracks);
+        renderTopTracks(topTracks);
     })
     .catch(error => console.error('Failed to fetch data:', error));
 
@@ -116,19 +117,12 @@ function fetchData(accessToken) {
                 name: playlist.name
             }));
             renderData(allPlaylists, recentTracks, topTracks);
-        })
-            
-        
+        })   
     })
     .catch(error => console.error('Failed to fetch data:', error));
 
     document.getElementById("loading-screen").display = "none";
 }
-
-
-
-selectElement = document.getElementById('term');
-selectElement.addEventListener('change', onDropdownChange);
 
 
 function renderTopTracks(topTracks) {
@@ -173,9 +167,7 @@ function renderData(playlists, recentTracks, topTracks) {
     
     // Render top tracks
     renderTopTracks(topTracks);
-    const selectElement = document.getElementById("term")
-    selectElement.addEventListener('change', renderTopTracks(getTopTracks(getTerm())));
-     
+
     // Render playlists
      var playlistsElement = document.createElement('h1');
      playlistsElement.textContent = 'My Playlists';
@@ -329,8 +321,6 @@ function createNewPlaylist(headers) {
         })
         .catch(error => console.error('Failed to create playlist:', error));
 }
-
-
 
 // Function to get all tracks from a playlist
 async function getAllTracksFromPlaylist(playlistId, headers) {
