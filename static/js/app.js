@@ -192,7 +192,7 @@ function renderTopTracks(topTracks) {
         // If it exists, clear its content to update with new data
         topTracksList.innerHTML = '';
     }
-    console,log(topTracks);
+    console.log(topTracks);
     topTracks.forEach(function(track) {
         // Create li elements for each track
         var trackItem = document.createElement('li');
