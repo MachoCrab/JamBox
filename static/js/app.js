@@ -152,7 +152,11 @@ function fetchDataOLD(accessToken) {
 
 function fetchData(accessToken) {
     console.log("access token: " + accessToken);
-
+    var headers = {
+        'Authorization': 'Bearer ' + accessToken,
+        'Content-Type': 'application/json'
+    };
+    
     Promise.all([
         getRecentlyPlayed(),
         getTopTracks(getTerm())
