@@ -63,7 +63,8 @@ function getTopTracks(term) {
     ])
     .then(responses => Promise.all(responses.map(response => response.json())))
     .then(data => {
-        var topTracks = data[0].items.map(track => ({
+        console.log("TOP TRACKS: " + data);
+        var topTracks = data.items.map(track => ({
             name: track.name,
             artist: track.artists[0].name,
             album: track.album.name,
@@ -71,12 +72,11 @@ function getTopTracks(term) {
             track_id: track.id,
             access_token: accessToken
         }));
+        console.log("top tracks" + topTracks);
 
         renderTopTracks(topTracks);
     })
-    .catch(error => console.error('Failed to fetch data:', error));
-
-    
+    .catch(error => console.error('Failed to fetch data:', error));    
 }
   
 // This function will be called after the user is redirected back from Spotify authorization
