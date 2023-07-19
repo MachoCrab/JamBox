@@ -180,7 +180,7 @@ function fetchData(accessToken) {
 }
 
 
-function renderTopTrack(topTracks) {
+function renderTopTracks(topTracks) {
     // Check if the ol element with id 'topTracksList' already exists
     var topTracksList = document.getElementById('topTracksList');
     if (!topTracksList) {
