@@ -154,8 +154,8 @@ function fetchData(accessToken) {
     console.log("access token: " + accessToken);
 
     Promise.all([
-        getRecentlyPlayed(accessToken),
-        getTopTracks(accessToken)
+        getRecentlyPlayed(),
+        getTopTracks(getTerm())
     ])
     .then(data => {
         var recentTracks = data[0];
