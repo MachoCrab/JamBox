@@ -156,7 +156,7 @@ function fetchData(accessToken) {
         'Authorization': 'Bearer ' + accessToken,
         'Content-Type': 'application/json'
     };
-    
+
     Promise.all([
         getRecentlyPlayed(),
         getTopTracks(getTerm())
@@ -193,8 +193,8 @@ function renderTopTracks(topTracks) {
         // If it exists, clear its content to update with new data
         topTracksList.innerHTML = '';
     }  
-
-    topTracks.forEach(function(track) {
+    console.log(topTracks);
+    topTracks.then(track => {
         var trackItem = document.createElement('li');
         var trackImage = document.createElement('img');
         trackImage.src = track.image_url;
@@ -209,7 +209,8 @@ function renderTopTracks(topTracks) {
         trackItem.appendChild(trackInfo);
         trackItem.appendChild(analyzeLink);
         topTracksList.appendChild(trackItem);
-    });
+    });    
+        
     document.body.appendChild(topTracksList);
     console.log("Top tracks printed")    
 }
