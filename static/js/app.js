@@ -180,8 +180,7 @@ function fetchData(accessToken) {
 }
 
 
-function renderTopTracks(topTracks) {
-    console.log("rendering topTracks");
+function renderTopTrack(topTracks) {
     // Check if the ol element with id 'topTracksList' already exists
     var topTracksList = document.getElementById('topTracksList');
     if (!topTracksList) {
@@ -192,9 +191,10 @@ function renderTopTracks(topTracks) {
     } else {
         // If it exists, clear its content to update with new data
         topTracksList.innerHTML = '';
-    }  
-    console.log(topTracks);
-    for (const track of topTracks) {
+    }
+    console,log(topTracks);
+    topTracks.forEach(function(track) {
+        // Create li elements for each track
         var trackItem = document.createElement('li');
         var trackImage = document.createElement('img');
         trackImage.src = track.image_url;
@@ -209,10 +209,9 @@ function renderTopTracks(topTracks) {
         trackItem.appendChild(trackInfo);
         trackItem.appendChild(analyzeLink);
         topTracksList.appendChild(trackItem);
-    }    
-        
-    document.body.appendChild(topTracksList);
-    console.log("Top tracks printed")    
+    });
+
+    console.log("Top tracks printed");
 }
 
 // inital load of the website
