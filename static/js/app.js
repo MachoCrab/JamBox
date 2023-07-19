@@ -194,7 +194,7 @@ function renderTopTracks(topTracks) {
         topTracksList.innerHTML = '';
     }  
     console.log(topTracks);
-    topTracks.then(track => {
+    for (const track of topTracks) {
         var trackItem = document.createElement('li');
         var trackImage = document.createElement('img');
         trackImage.src = track.image_url;
@@ -209,7 +209,7 @@ function renderTopTracks(topTracks) {
         trackItem.appendChild(trackInfo);
         trackItem.appendChild(analyzeLink);
         topTracksList.appendChild(trackItem);
-    });    
+    }    
         
     document.body.appendChild(topTracksList);
     console.log("Top tracks printed")    
