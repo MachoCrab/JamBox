@@ -56,31 +56,54 @@ function getTopTracks(term) {
         'Content-Type': 'application/json'
     };
 
-    url = 'https://api.spotify.com/v1/me/top/tracks?time_range=' + term + '&limit=50';
-    console.log(url);
-    Promise.all([
-        fetch(url, { headers }),
-    ])
-    .then(responses => Promise.all(responses.map(response => response.json())))
-    .then(data => {
-        console.log("TOP TRACKS: " + data);
-        var topTracks = data.items.map(track => ({
-            name: track.name,
-            artist: track.artists[0].name,
-            album: track.album.name,
-            image_url: track.album.images[0].url,
-            track_id: track.id,
-            access_token: accessToken
-        }));
-        console.log("top tracks" + topTracks);
-
-        renderTopTracks(topTracks);
-    })
-    .catch(error => console.error('Failed to fetch data:', error));    
+    return fetch('https://api.spotify.com/v1/me/top/tracks?time_range=' + term + '&limit=50', { headers })
+        .then(response => response.json())
+        .then(data => {
+            var topTracks = data.items.map(track => ({
+                name: track.name,
+                artist: track.artists[0].name,
+                album: track.album.name,
+                image_url: track.album.images[0].url,
+                track_id: track.id,
+                access_token: accessToken
+            }));
+            return topTracks;
+        })
+        .catch(error => {
+            console.error('Failed to fetch top tracks:', error);
+            return [];
+        });
 }
+
+function getRecentlyPlayed() {
+    accessToken = getAccessTokenFromURL();
+    var headers = {
+        'Authorization': 'Bearer ' + accessToken,
+        'Content-Type': 'application/json'
+    };
+
+    return fetch('https://api.spotify.com/v1/me/player/recently-played', { headers })
+        .then(response => response.json())
+        .then(data => {
+            var recentTracks = data.items.map(track => ({
+                name: track.track.name,
+                artist: track.track.artists[0].name,
+                album: track.track.album.name,
+                image_url: track.track.album.images[0].url,
+                track_id: track.track.id,
+                access_token: accessToken
+            }));
+            return recentTracks;
+        })
+        .catch(error => {
+            console.error('Failed to fetch recently played tracks:', error);
+            return [];
+        });
+}
+
   
 // This function will be called after the user is redirected back from Spotify authorization
-function fetchData(accessToken) {
+function fetchDataOLD(accessToken) {
     console.log("access token: " + accessToken);
     // Use the access token to fetch data from Spotify API
     var headers = {
@@ -112,6 +135,31 @@ function fetchData(accessToken) {
             track_id: track.id,
             access_token: accessToken
         }));
+
+        getAllUserPlaylists(headers).then(playlists => {
+            console.log(playlists);
+            var allPlaylists = playlists.map(playlist => ({
+                url: playlist.external_urls['spotify'],
+                name: playlist.name
+            }));
+            renderData(allPlaylists, recentTracks, topTracks);
+        })   
+    })
+    .catch(error => console.error('Failed to fetch data:', error));
+
+    document.getElementById("loading-screen").display = "none";
+}
+
+function fetchData(accessToken) {
+    console.log("access token: " + accessToken);
+
+    Promise.all([
+        getRecentlyPlayed(accessToken),
+        getTopTracks(accessToken)
+    ])
+    .then(data => {
+        var recentTracks = data[0];
+        var topTracks = data[1];
 
         getAllUserPlaylists(headers).then(playlists => {
             console.log(playlists);
