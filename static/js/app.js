@@ -8,7 +8,7 @@ if (getDataButton) {
 }
 
 function authorizeSpotify() {
-    var clientId = process.env.CLIENT_ID;
+    var clientId = '97a45e5baf1640f0bd179cc0137fe054';
     var redirectUri = 'https://emma-nipperess.github.io/JamBox/data.html';
 
     // Set up the authorization URL
