@@ -14,12 +14,16 @@ body {
   .button {
     display: inline-block;
     padding: 10px 20px;
-    background-color: #1ED760;
-    color: white;
     font-size: 18px;
     text-decoration: none;
     border-radius: 4px;
     margin-top: 20px;
+    background-color: transparent;
+    border: 2px solid #333;
+    color: #333;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
   }
   
   .button:hover {
@@ -67,3 +71,81 @@ body {
   #term {
     font-size: 30px;
   }
+
+/*----- Styling for index page -------------- */
+#index_page {
+  width: 90%;
+  margin: auto;
+  margin-top: -50px;
+}
+
+body #index_page {
+  background-color: #1DB954;
+  color: black;
+}
+#index_page p, ul li {
+  text-align: left;
+  font-size: 20px;
+}
+
+h3 {
+  font-size: 25px;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+}
+
+.container div {
+  max-width: 45%;
+}
+
+.component {
+  min-width: 100px;
+  
+  padding: 20px;
+  transition: transform 0.3s ease; 
+}
+
+.component:hover {
+  transform: scale(1.1);
+  
+}
+
+/* Base styles for the button */
+button.rainbow-wave {
+  width: 200px;
+  height: 60px;
+  font-size: 18px;
+  background-color: transparent;
+  border: 2px solid transparent;
+  color: #fff; /* Set the text color to white */
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  background-image: linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3);
+  background-size: 600% 100%;
+  animation: rainbowWave 5s linear infinite;
+  transition: color 0.2s ease; /* Add smooth color transition on hover */
+}
+
+/* Rainbow animation */
+@keyframes rainbowWave {
+  0% {
+    background-position: 0 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Style the text color on hover */
+button.rainbow-wave:hover {
+  color: #333; /* Change the text color on hover */
+  border-color: #333;
+}
