@@ -2,7 +2,7 @@ jobs:
   my-job:
     runs-on: windows-latest
     env:
-      MY_SECRET: ${{ secrets.CLIENT_ID }}
+      CLIENT_ID: ${{ secrets.CLIENT_ID }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2

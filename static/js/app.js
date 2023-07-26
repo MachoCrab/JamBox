@@ -8,7 +8,7 @@ if (getDataButton) {
 }
 
 function authorizeSpotify() {
-    var clientId = '97a45e5baf1640f0bd179cc0137fe054'
+    var clientId = process.env.CLIENT_ID;
     var redirectUri = 'https://emma-nipperess.github.io/JamBox/data.html';
 
     // Set up the authorization URL
@@ -150,6 +150,7 @@ function fetchDataOLD(accessToken) {
 
 function updateTopTracks(term) {
     getTopTracks(term).then(data => {
+        
         renderTopTracks(data);
     });
 }
@@ -229,7 +230,7 @@ function renderData(playlists, recentTracks, topTracks) {
 
     // Render playlists
      var playlistsElement = document.createElement('h1');
-     playlistsElement.textContent = 'My Playlists';
+     playlistsElement.textContent = 'Your Playlists';
      document.body.appendChild(playlistsElement);
  
      var playlistsList = document.createElement('ul');
@@ -244,9 +245,11 @@ function renderData(playlists, recentTracks, topTracks) {
      document.body.appendChild(playlistsList);
 
 
+     // Render top tracks 
+
     // Render recent tracks
     var recentTracksElement = document.createElement('h1');
-    recentTracksElement.textContent = 'My Recent Tracks';
+    recentTracksElement.textContent = 'Your Recent Tracks';
     document.body.appendChild(recentTracksElement);
 
     var recentTracksList = document.createElement('ul');

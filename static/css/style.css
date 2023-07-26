@@ -99,6 +99,7 @@ h3 {
   align-items: center;
   align-content: center;
   justify-content: center;
+  width: 100%;
 }
 
 .container div {
@@ -106,8 +107,7 @@ h3 {
 }
 
 .component {
-  min-width: 100px;
-  
+  min-width: 200px;
   padding: 20px;
   transition: transform 0.3s ease; 
 }
@@ -148,4 +148,26 @@ button.rainbow-wave {
 button.rainbow-wave:hover {
   color: #333; /* Change the text color on hover */
   border-color: #333;
+}
+
+
+#contact-form {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin: auto;
+}
+
+#contact-form input, label, textarea {
+  width: 45%;
+}
+
+#contact-form button {
+  width: 40%;
+  margin: auto;
+  margin-top: 30px;
+}
+
+.options .component {
+  flex: 1;
 }
