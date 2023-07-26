@@ -1,9 +1,25 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+
 jobs:
-  my-job:
-    runs-on: windows-latest
+  build:
+    runs-on: ubuntu-latest
+
     env:
       CLIENT_ID: ${{ secrets.CLIENT_ID }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      # Add more steps as needed
+
+      - name: Inject secret into main.js
+        run: |
+          sed -i "s/__CLIENT_ID_PLACEHOLDER__/${{ env.CLIENT_ID }}/" static/js/main.js
+
+      - name: Build and deploy
+        # Add build and deployment steps here
+        # For example: npm install, npm run build, etc.
