@@ -1,3 +1,5 @@
+import { clientId } from './config.js';
+console.log(clientId)
 var getDataButton = document.getElementById('get-data-button');
 
 if (getDataButton) {
@@ -9,7 +11,6 @@ if (getDataButton) {
 
 function authorizeSpotify() {
     // Replace with your Spotify API client ID and redirect URI
-    var clientId = config.client_id;
     var redirectUri = 'https://machocrab.github.io/JamBox/data.html';
 
     // Set up the authorization URL
