@@ -9,7 +9,7 @@ if (getDataButton) {
 
 function authorizeSpotify() {
     var clientId = '97a45e5baf1640f0bd179cc0137fe054'
-    var redirectUri = 'https://machocrab.github.io/JamBox/data.html';
+    var redirectUri = 'https://emma-nipperess.github.io/JamBox/data.html';
 
     // Set up the authorization URL
     var authParams = new URLSearchParams({
