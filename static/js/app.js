@@ -111,6 +111,13 @@ function fetchData(accessToken) {
     document.getElementById("loading-screen").display = "none";
 }
 
+function updateTopTracks(term) {
+    getTopTracks(term).then(data => {
+        
+        renderTopTracks(data);
+    });
+}
+
 function renderTopTracks(topTracks) {
     var topTracksList = document.getElementById('topTracksList');
     if (!topTracksList) {
@@ -331,22 +338,22 @@ function updatePlaylist(playlistName) {
 
             if (!playlist) {
                 createNewPlaylist(headers, playlistName);
-            } 
-            
-            const playlistId = playlist.id;
-            getAllTracksFromPlaylist(playlistId, headers)
-                .then(dumpTracks => {
-                    getAllOtherTracks(playlists, playlistId, headers)
-                        .then(otherTracks => {
-                            const uniqueTracks = getUniqueTracks(otherTracks, dumpTracks);
-                            if (uniqueTracks.length > 0) {
-                                addAllTracksToPlaylist(uniqueTracks, playlistId, headers);
-                            }
-                        })
-                        .catch(error => console.error('Failed to fetch other tracks:', error));
-                })
-                .catch(error => console.error('Failed to fetch dump tracks:', error));
-        
+                updatePlaylist(playlistName);
+            } else {
+                const playlistId = playlist.id;
+                getAllTracksFromPlaylist(playlistId, headers)
+                    .then(dumpTracks => {
+                        getAllOtherTracks(playlists, playlistId, headers)
+                            .then(otherTracks => {
+                                const uniqueTracks = getUniqueTracks(otherTracks, dumpTracks);
+                                if (uniqueTracks.length > 0) {
+                                    addAllTracksToPlaylist(uniqueTracks, playlistId, headers);
+                                }
+                            })
+                            .catch(error => console.error('Failed to fetch other tracks:', error));
+                    })
+                    .catch(error => console.error('Failed to fetch dump tracks:', error));
+            }
         })
         .catch(error => console.error('Failed to fetch playlists:', error));
 }
