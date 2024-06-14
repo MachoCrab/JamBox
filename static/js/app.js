@@ -340,6 +340,29 @@ document.getElementById('update-playlist-button').addEventListener('click', () =
     }
 });
 
+function createNewPlaylist(headers, playlistName) {
+    const createPlaylistUrl = 'https://api.spotify.com/v1/me/playlists';
+    const request_data = {
+        name: playlistName,
+        public: false,
+        description: 'A playlist containing every song from all other playlists'
+    };
+    fetch(createPlaylistUrl, {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify(request_data)
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.id) {
+                console.log('Playlist created successfully:', data.name);
+            } else {
+                console.error('Failed to create playlist');
+            }
+        })
+        .catch(error => console.error('Failed to create playlist:', error));
+}
+
 async function updatePlaylist(playlistName) {
     const accessToken = getAccessTokenFromURL();
     var headers = {
