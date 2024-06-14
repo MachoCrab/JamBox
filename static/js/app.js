@@ -380,7 +380,6 @@ async function updatePlaylist(playlistName) {
         await processPlaylist(newPlaylist.id, headers, playlists);
     } else {
         alert("use a playlist name that doesn't exist. This function is lowkey dangerous and would otherwise pollute whatever playlist you pass with alot of songs.")
-        return;
     }
 
     hideLoadingScreen();
