@@ -122,7 +122,7 @@ function renderTopTracks(topTracks) {
     if (!topTracksList) {
         topTracksList = document.createElement('ol');
         topTracksList.id = 'topTracksList';
-        document.body.appendChild(topTracksList);
+        document.getElementById("main").appendChild(topTracksList);
     } else {
         topTracksList.innerHTML = '';
     }
@@ -149,7 +149,7 @@ function renderData(playlists, recentTracks, topTracks) {
 
     var playlistsElement = document.createElement('h1');
     playlistsElement.textContent = 'Your Playlists';
-    document.body.appendChild(playlistsElement);
+    document.getElementById("main").appendChild(playlistsElement);
 
     var playlistsList = document.createElement('ul');
     playlists.forEach(function (playlist) {
@@ -160,11 +160,11 @@ function renderData(playlists, recentTracks, topTracks) {
         playlistItem.appendChild(playlistLink);
         playlistsList.appendChild(playlistItem);
     });
-    document.body.appendChild(playlistsList);
+    document.getElementById("main").appendChild(playlistsList);
 
     var recentTracksElement = document.createElement('h1');
     recentTracksElement.textContent = 'Your Recent Tracks';
-    document.body.appendChild(recentTracksElement);
+    document.getElementById("main").appendChild(recentTracksElement);
 
     var recentTracksList = document.createElement('ul');
     recentTracks.forEach(function (track) {
