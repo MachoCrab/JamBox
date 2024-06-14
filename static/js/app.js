@@ -192,6 +192,7 @@ function getAllUserPlaylists(headers) {
     const allPlaylists = [];
 
     async function fetchPlaylists() {
+        showLoadingScreen("Fetching your playlists at offset: " + offset);
         const params = new URLSearchParams({
             limit: limit,
             offset: offset
@@ -219,6 +220,8 @@ function getAllUserPlaylists(headers) {
         }
     }
 
+    showLoadingScreen("Fetching your playlists...");
+
     return fetchAllPlaylists();
 }
 
@@ -233,6 +236,7 @@ async function getAllTracksFromPlaylist(playlistId, headers) {
             offset: offset,
             limit: limit
         };
+        showLoadingScreen("Getting songs from playlistId:" + playlistId + ". Currently at offset: " + offset);
 
         await new Promise(resolve => setTimeout(resolve, 1000)); // Delay to prevent rate limiting
 
@@ -332,6 +336,7 @@ document.getElementById('update-playlist-button').addEventListener('click', () =
 });
 
 function createNewPlaylist(headers, playlistName) {
+    showLoadingScreen("Creating new playlist...");
     const createPlaylistUrl = 'https://api.spotify.com/v1/me/playlists';
     const request_data = {
         name: playlistName,
