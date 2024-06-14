@@ -223,6 +223,7 @@ function getAllUserPlaylists(headers) {
 }
 
 async function getAllTracksFromPlaylist(playlistId, headers) {
+
     const limit = 50;
     let offset = 0;
     const allTracks = [];
@@ -268,6 +269,8 @@ async function getAllOtherTracks(playlists, dumpPlaylistId, headers) {
 }
 
 function getUniqueTracks(otherTracks, dumpTracks) {
+    console.log("getting unique tracks");
+    
     const uniqueTracks = [];
     const dumpTrackURIs = dumpTracks.map(track => track.track.uri);
     for (const track of otherTracks) {
@@ -284,6 +287,8 @@ function getUniqueTracks(otherTracks, dumpTracks) {
 }
 
 async function addAllTracksToPlaylist(trackURIs, playlistId, headers) {
+    console.log("adding all the tracks to playlist- woo");
+    
     const addTracksUrl = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
     const batchSize = 100;
 
@@ -317,13 +322,29 @@ document.getElementById('update-playlist-button').addEventListener('click', () =
     }
 });
 
+function getTerm() {
+    const term = document.getElementById("term").value;
+    console.log("Term" + term);
+    return term;
+}
+
+document.getElementById('update-playlist-button').addEventListener('click', () => {
+    const playlistName = document.getElementById('playlist-name').value;
+    if (playlistName) {
+        updatePlaylist(playlistName);
+    } else {
+        alert('Please enter a playlist name.');
+    }
+});
+
 async function updatePlaylist(playlistName) {
     const accessToken = getAccessTokenFromURL();
-
     var headers = {
         'Authorization': 'Bearer ' + accessToken,
         'Content-Type': 'application/json'
     };
+
+    showLoadingScreen("Fetching your playlists...");
 
     const playlists = await getAllUserPlaylists(headers);
     const playlist = playlists.find(item => item.name === playlistName);
@@ -336,45 +357,37 @@ async function updatePlaylist(playlistName) {
     } else {
         await processPlaylist(playlist.id, headers, playlists);
     }
+
+    hideLoadingScreen();
 }
 
 async function processPlaylist(playlistId, headers, playlists) {
+    showLoadingScreen("Fetching tracks from your playlists...");
+
     const dumpTracks = await getAllTracksFromPlaylist(playlistId, headers);
     const otherTracks = await getAllOtherTracks(playlists, playlistId, headers);
+
+    showLoadingScreen("Filtering unique tracks...");
+
     const uniqueTracks = getUniqueTracks(otherTracks, dumpTracks);
     if (uniqueTracks.length > 0) {
+        showLoadingScreen("Adding unique tracks to your playlist...");
         await addAllTracksToPlaylist(uniqueTracks, playlistId, headers);
     }
 }
 
-function getTerm() {
-    const term = document.getElementById("term").value;
-    console.log("Term" + term);
-    return term;
+function showLoadingScreen(message) {
+    const loadingScreen = document.getElementById('loading-screen');
+    const loadingMessage = document.getElementById('loading-message');
+    const progress = document.getElementById('progress');
+    loadingMessage.textContent = message;
+    loadingScreen.style.display = "flex";
+    progress.style.width = `${Math.min(parseInt(progress.style.width) + 20, 100)}%`;
 }
 
-async function createNewPlaylist(headers, playlistName) {
-    const createPlaylistUrl = 'https://api.spotify.com/v1/me/playlists';
-    const request_data = {
-        name: playlistName,
-        public: false,
-        description: 'A playlist containing every song from all other playlists'
-    };
-
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Delay to prevent rate limiting
-
-    fetch(createPlaylistUrl, {
-        method: 'POST',
-        headers: headers,
-        body: JSON.stringify(request_data)
-    })
-        .then(response => response.json())
-        .then(data => {
-            if (data.id) {
-                console.log('Playlist created successfully:', data.name);
-            } else {
-                console.error('Failed to create playlist');
-            }
-        })
-        .catch(error => console.error('Failed to create playlist:', error));
+function hideLoadingScreen() {
+    const loadingScreen = document.getElementById('loading-screen');
+    const progress = document.getElementById('progress');
+    loadingScreen.style.display = "none";
+    progress.style.width = "0%";
 }
