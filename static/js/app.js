@@ -201,7 +201,7 @@ function getAllUserPlaylists(headers) {
         });
 
         await new Promise(resolve => setTimeout(resolve, 1000)); // Delay to prevent rate limiting
-
+        hideLoadingScreen();
         return fetch(`${playlistsUrl}?${params}`, { headers })
             .then(response => response.json())
             .then(data => data.items)
@@ -221,8 +221,6 @@ function getAllUserPlaylists(headers) {
             return fetchAllPlaylists();
         }
     }
-
-    showLoadingScreen("Fetching your playlists...");
 
     return fetchAllPlaylists();
 }
