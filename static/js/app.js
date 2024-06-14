@@ -347,6 +347,12 @@ async function processPlaylist(playlistId, headers, playlists) {
     }
 }
 
+function getTerm() {
+    const term = document.getElementById("term").value;
+    console.log("Term" + term);
+    return term;
+}
+
 async function createNewPlaylist(headers, playlistName) {
     const createPlaylistUrl = 'https://api.spotify.com/v1/me/playlists';
     const request_data = {
