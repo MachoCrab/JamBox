@@ -113,7 +113,6 @@ function fetchData(accessToken) {
 
 function updateTopTracks(term) {
     getTopTracks(term).then(data => {
-        
         renderTopTracks(data);
     });
 }
@@ -192,11 +191,13 @@ function getAllUserPlaylists(headers) {
     let offset = 0;
     const allPlaylists = [];
 
-    function fetchPlaylists() {
+    async function fetchPlaylists() {
         const params = new URLSearchParams({
             limit: limit,
             offset: offset
         });
+
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Delay to prevent rate limiting
 
         return fetch(`${playlistsUrl}?${params}`, { headers })
             .then(response => response.json())
@@ -207,16 +208,15 @@ function getAllUserPlaylists(headers) {
             });
     }
 
-    function fetchAllPlaylists() {
-        return fetchPlaylists().then(playlists => {
-            if (playlists.length === 0) {
-                return allPlaylists;
-            } else {
-                allPlaylists.push(...playlists);
-                offset += limit;
-                return fetchAllPlaylists();
-            }
-        });
+    async function fetchAllPlaylists() {
+        const playlists = await fetchPlaylists();
+        if (playlists.length === 0) {
+            return allPlaylists;
+        } else {
+            allPlaylists.push(...playlists);
+            offset += limit;
+            return fetchAllPlaylists();
+        }
     }
 
     return fetchAllPlaylists();
@@ -232,6 +232,8 @@ async function getAllTracksFromPlaylist(playlistId, headers) {
             offset: offset,
             limit: limit
         };
+
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Delay to prevent rate limiting
 
         const playlistTracksUrl = `https://api.spotify.com/v1/playlists/${playlistId}/tracks?${new URLSearchParams(params)}`;
 
@@ -254,26 +256,15 @@ async function getAllTracksFromPlaylist(playlistId, headers) {
     return allTracks;
 }
 
-function getAllOtherTracks(playlists, dumpPlaylistId, headers) {
+async function getAllOtherTracks(playlists, dumpPlaylistId, headers) {
     const allOtherTracks = [];
-    const promises = [];
     for (const playlist of playlists) {
         if (playlist.id !== dumpPlaylistId) {
-            const promise = getAllTracksFromPlaylist(playlist.id, headers);
-            promises.push(promise);
+            const tracks = await getAllTracksFromPlaylist(playlist.id, headers);
+            allOtherTracks.push(...tracks);
         }
     }
-    return Promise.all(promises)
-        .then(results => {
-            for (const tracks of results) {
-                allOtherTracks.push(...tracks);
-            }
-            return allOtherTracks;
-        })
-        .catch(error => {
-            console.error('Failed to fetch other tracks:', error);
-            return [];
-        });
+    return allOtherTracks;
 }
 
 function getUniqueTracks(otherTracks, dumpTracks) {
@@ -292,7 +283,7 @@ function getUniqueTracks(otherTracks, dumpTracks) {
     return uniqueTracks;
 }
 
-function addAllTracksToPlaylist(trackURIs, playlistId, headers) {
+async function addAllTracksToPlaylist(trackURIs, playlistId, headers) {
     const addTracksUrl = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
     const batchSize = 100;
 
@@ -301,6 +292,8 @@ function addAllTracksToPlaylist(trackURIs, playlistId, headers) {
         const request_data = {
             uris: batchURIs
         };
+
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Delay to prevent rate limiting
 
         fetch(addTracksUrl, {
             method: 'POST',
@@ -324,7 +317,7 @@ document.getElementById('update-playlist-button').addEventListener('click', () =
     }
 });
 
-function updatePlaylist(playlistName) {
+async function updatePlaylist(playlistName) {
     const accessToken = getAccessTokenFromURL();
 
     var headers = {
@@ -332,39 +325,38 @@ function updatePlaylist(playlistName) {
         'Content-Type': 'application/json'
     };
 
-    getAllUserPlaylists(headers)
-        .then(playlists => {
-            const playlist = playlists.find(item => item.name === playlistName);
+    const playlists = await getAllUserPlaylists(headers);
+    const playlist = playlists.find(item => item.name === playlistName);
 
-            if (!playlist) {
-                createNewPlaylist(headers, playlistName);
-                updatePlaylist(playlistName);
-            } else {
-                const playlistId = playlist.id;
-                getAllTracksFromPlaylist(playlistId, headers)
-                    .then(dumpTracks => {
-                        getAllOtherTracks(playlists, playlistId, headers)
-                            .then(otherTracks => {
-                                const uniqueTracks = getUniqueTracks(otherTracks, dumpTracks);
-                                if (uniqueTracks.length > 0) {
-                                    addAllTracksToPlaylist(uniqueTracks, playlistId, headers);
-                                }
-                            })
-                            .catch(error => console.error('Failed to fetch other tracks:', error));
-                    })
-                    .catch(error => console.error('Failed to fetch dump tracks:', error));
-            }
-        })
-        .catch(error => console.error('Failed to fetch playlists:', error));
+    if (!playlist) {
+        await createNewPlaylist(headers, playlistName);
+        const newPlaylists = await getAllUserPlaylists(headers); // Fetch playlists again to get the new playlist ID
+        const newPlaylist = newPlaylists.find(item => item.name === playlistName);
+        await processPlaylist(newPlaylist.id, headers, playlists);
+    } else {
+        await processPlaylist(playlist.id, headers, playlists);
+    }
 }
 
-function createNewPlaylist(headers, playlistName) {
+async function processPlaylist(playlistId, headers, playlists) {
+    const dumpTracks = await getAllTracksFromPlaylist(playlistId, headers);
+    const otherTracks = await getAllOtherTracks(playlists, playlistId, headers);
+    const uniqueTracks = getUniqueTracks(otherTracks, dumpTracks);
+    if (uniqueTracks.length > 0) {
+        await addAllTracksToPlaylist(uniqueTracks, playlistId, headers);
+    }
+}
+
+async function createNewPlaylist(headers, playlistName) {
     const createPlaylistUrl = 'https://api.spotify.com/v1/me/playlists';
     const request_data = {
         name: playlistName,
         public: false,
         description: 'A playlist containing every song from all other playlists'
     };
+
+    await new Promise(resolve => setTimeout(resolve, 1000)); // Delay to prevent rate limiting
+
     fetch(createPlaylistUrl, {
         method: 'POST',
         headers: headers,
