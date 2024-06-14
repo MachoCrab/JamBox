@@ -331,21 +331,22 @@ function updatePlaylist(playlistName) {
 
             if (!playlist) {
                 createNewPlaylist(headers, playlistName);
-            } else {
-                const playlistId = playlist.id;
-                getAllTracksFromPlaylist(playlistId, headers)
-                    .then(dumpTracks => {
-                        getAllOtherTracks(playlists, playlistId, headers)
-                            .then(otherTracks => {
-                                const uniqueTracks = getUniqueTracks(otherTracks, dumpTracks);
-                                if (uniqueTracks.length > 0) {
-                                    addAllTracksToPlaylist(uniqueTracks, playlistId, headers);
-                                }
-                            })
-                            .catch(error => console.error('Failed to fetch other tracks:', error));
-                    })
-                    .catch(error => console.error('Failed to fetch dump tracks:', error));
-            }
+            } 
+            
+            const playlistId = playlist.id;
+            getAllTracksFromPlaylist(playlistId, headers)
+                .then(dumpTracks => {
+                    getAllOtherTracks(playlists, playlistId, headers)
+                        .then(otherTracks => {
+                            const uniqueTracks = getUniqueTracks(otherTracks, dumpTracks);
+                            if (uniqueTracks.length > 0) {
+                                addAllTracksToPlaylist(uniqueTracks, playlistId, headers);
+                            }
+                        })
+                        .catch(error => console.error('Failed to fetch other tracks:', error));
+                })
+                .catch(error => console.error('Failed to fetch dump tracks:', error));
+        
         })
         .catch(error => console.error('Failed to fetch playlists:', error));
 }
