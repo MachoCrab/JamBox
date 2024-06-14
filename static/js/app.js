@@ -353,12 +353,14 @@ async function updatePlaylist(playlistName) {
     const playlist = playlists.find(item => item.name === playlistName);
 
     if (!playlist) {
+        
         await createNewPlaylist(headers, playlistName);
         const newPlaylists = await getAllUserPlaylists(headers); // Fetch playlists again to get the new playlist ID
         const newPlaylist = newPlaylists.find(item => item.name === playlistName);
         await processPlaylist(newPlaylist.id, headers, playlists);
     } else {
-        await processPlaylist(playlist.id, headers, playlists);
+        alert("use a playlist name that doesn't exist. This function is lowkey dangerous and would otherwise pollute whatever playlist you pass with alot of songs.")
+        return;
     }
 
     hideLoadingScreen();
