@@ -183,6 +183,8 @@ function renderData(playlists, recentTracks, topTracks) {
         trackItem.appendChild(analyzeLink);
         recentTracksList.appendChild(trackItem);
     });
+    document.getElementById("main").appendChild(recentTracksList);
+
 }
 
 function getAllUserPlaylists(headers) {
