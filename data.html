@@ -3,6 +3,7 @@
 <head>
     <title>Spotify Data</title>
     <link rel="stylesheet" type="text/css" href="static/css/style.css">
+    <link rel="stylesheet" href="https://emma-nipperess.github.io/COMP4702_CONTENT/style.css">
 </head>
 <body>
     <div id="loading-screen" style="display: none;">
@@ -11,19 +12,26 @@
             <div id="progress"></div>
         </div>
     </div>
-    <h1>Your Data</h1>
+    <div id="sideNav" class="sidenav">
+                    
+    </div>
 
-    <h1>Your top tracks in the last 
-        <select name="term" id="term" onchange="updateTopTracks(getTerm())">
-            <option value="medium_term">6 months</option>
-            <option value="short_term">4 weeks</option>
-            <option value="long_term">Lifetime</option>
-        </select>
-    </h1>
+    <div class="main">
 
-    <div>
-        <input type="text" id="playlist-name" placeholder="Enter playlist name">
-        <button id="update-playlist-button">Update Playlist</button>
+        <h1>Your Data</h1>
+
+        <h1>Your top tracks in the last 
+            <select name="term" id="term" onchange="updateTopTracks(getTerm())">
+                <option value="medium_term">6 months</option>
+                <option value="short_term">4 weeks</option>
+                <option value="long_term">Lifetime</option>
+            </select>
+        </h1>
+
+        <div>
+            <input type="text" id="playlist-name" placeholder="Enter playlist name">
+            <button id="update-playlist-button">Update Playlist</button>
+        </div>
     </div>
 
     <script src="static/js/app.js"></script>
