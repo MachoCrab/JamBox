@@ -316,15 +316,6 @@ async function addAllTracksToPlaylist(trackURIs, playlistId, headers) {
     }
 }
 
-document.getElementById('update-playlist-button').addEventListener('click', () => {
-    const playlistName = document.getElementById('playlist-name').value;
-    if (playlistName) {
-        updatePlaylist(playlistName);
-    } else {
-        alert('Please enter a playlist name.');
-    }
-});
-
 function getTerm() {
     const term = document.getElementById("term").value;
     console.log("Term" + term);
@@ -357,6 +348,7 @@ function createNewPlaylist(headers, playlistName) {
             if (data.id) {
                 console.log('Playlist created successfully:', data.name);
             } else {
+                hideLoadingScreen();
                 console.error('Failed to create playlist');
             }
         })
