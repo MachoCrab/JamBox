@@ -257,34 +257,37 @@ async function getAllTracksFromPlaylist(playlistId, headers) {
     return allTracks;
 }
 
-async function getAllOtherTracks(playlists, dumpPlaylistId, headers) {
+async function getAllOtherTracks(playlists, headers) {
     const allOtherTracks = [];
     for (const playlist of playlists) {
-        if (playlist.id !== dumpPlaylistId) {
-            const tracks = await getAllTracksFromPlaylist(playlist.id, headers);
-            allOtherTracks.push(...tracks);
-        }
+        const tracks = await getAllTracksFromPlaylist(playlist.id, headers);
+        allOtherTracks.push(...tracks);
     }
     return allOtherTracks;
 }
 
-function getUniqueTracks(otherTracks, dumpTracks) {
+function getUniqueTracks(otherTracks) {
     console.log("getting unique tracks");
     
+    const uniqueTrackSet = new Set();
     const uniqueTracks = [];
-    const dumpTrackURIs = dumpTracks.map(track => track.track.uri);
-    for (const track of otherTracks) {
+
+    // Add all other tracks to the set
+    otherTracks.forEach(track => {
         try {
             const trackURI = track.track.uri;
-            if (!dumpTrackURIs.includes(trackURI)) {
+            if (!uniqueTrackSet.has(trackURI)) {
+                uniqueTrackSet.add(trackURI);
                 uniqueTracks.push(trackURI);
             }
         } catch (error) {
             console.log("Error: " + error.message);
         }
-    }
+    });
+
     return uniqueTracks;
 }
+
 
 async function addAllTracksToPlaylist(trackURIs, playlistId, headers) {
     console.log("adding all the tracks to playlist- woo");
@@ -364,12 +367,11 @@ async function updatePlaylist(playlistName) {
 async function processPlaylist(playlistId, headers, playlists) {
     showLoadingScreen("Fetching tracks from your playlists...");
 
-    const dumpTracks = await getAllTracksFromPlaylist(playlistId, headers);
-    const otherTracks = await getAllOtherTracks(playlists, playlistId, headers);
+    const otherTracks = await getAllOtherTracks(playlists, headers);
 
     showLoadingScreen("Filtering unique tracks...");
 
-    const uniqueTracks = getUniqueTracks(otherTracks, dumpTracks);
+    const uniqueTracks = getUniqueTracks(otherTracks);
     if (uniqueTracks.length > 0) {
         showLoadingScreen("Adding unique tracks to your playlist...");
         await addAllTracksToPlaylist(uniqueTracks, playlistId, headers);
